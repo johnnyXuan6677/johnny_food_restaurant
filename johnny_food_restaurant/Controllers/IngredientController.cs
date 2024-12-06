@@ -22,5 +22,23 @@ namespace johnny_food_restaurant.Controllers
         {
             return View(await ingredients.GetByIdAsync(id, new QueryOption<Ingredient>() { Includes = "ProductIngredients.Product" }));
         }
+        [HttpGet]
+        public IActionResult Create()
+        {
+            return View();
+        }
+        //Ingredient/Create
+        [HttpPost]
+        // XSRF/CSRF 預防
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create([Bind("IngredientId, Name")] Ingredient ingredient)
+        {
+            if (ModelState.IsValid)
+            {
+                await ingredients.AddAsync(ingredient);
+                return RedirectToAction("Index");
+            }
+            return View(ingredient);
+        }
     }
 }

@@ -15,9 +15,10 @@ namespace johnny_food_restaurant.Models
             _dbSet = context.Set<T>();
         }
 
-        public Task AddAsync(T entity)
+        public async Task AddAsync(T entity)
         {
-            throw new NotImplementedException();
+            await _dbSet.AddAsync(entity);
+            await _context.SaveChangesAsync();
         }
 
         public Task DeleteAsync(int id)
