@@ -40,5 +40,20 @@ namespace johnny_food_restaurant.Controllers
             }
             return View(ingredient);
         }
+
+        //Ingredient/Delete
+        [HttpGet]
+        public async Task<IActionResult> Delete(int id)
+        {
+            return View(await ingredients.GetByIdAsync(id,new QueryOption<Ingredient> { Includes = "ProductIngredients.Product"})); 
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Delete(Ingredient ingredient)
+        {
+            await ingredients.DeleteAsync(ingredient.IngredientId);
+            return RedirectToAction("Index");
+        }
     }
 }

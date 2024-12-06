@@ -21,9 +21,11 @@ namespace johnny_food_restaurant.Models
             await _context.SaveChangesAsync();
         }
 
-        public Task DeleteAsync(int id)
+        public async Task DeleteAsync(int id)
         {
-            throw new NotImplementedException();
+            T entity = await _dbSet.FindAsync(id);
+            _dbSet.Remove(entity);
+            await _context.SaveChangesAsync();
         }
 
         public async Task<IEnumerable<T>> GetAllAsync()
