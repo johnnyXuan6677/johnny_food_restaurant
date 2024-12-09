@@ -1,6 +1,7 @@
 ﻿using johnny_food_restaurant.Data;
 using johnny_food_restaurant.Models;
 using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 
 namespace johnny_food_restaurant.Controllers
 {
@@ -54,6 +55,23 @@ namespace johnny_food_restaurant.Controllers
         {
             await ingredients.DeleteAsync(ingredient.IngredientId);
             return RedirectToAction("Index");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult>Edit(int id)
+        {
+            return View(await ingredients.GetByIdAsync(id, new QueryOption<Ingredient> { Includes = "ProductIngredients.Product" }));
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult>Edit(Ingredient ingredient)
+            {
+            if(ModelState.IsValid)
+            {
+                await ingredients.UpdateAsync(ingredient);
+                return RedirectToAction("Index");
+            }
+            return View(ingredient);
         }
     }
 }
