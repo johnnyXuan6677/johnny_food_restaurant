@@ -7,6 +7,7 @@ namespace johnny_food_restaurant.Models
     {
         Task<IEnumerable<T>> GetAllAsync();
         Task<T> GetByIdAsync(int id, QueryOption<T> option);
+        Task<IEnumerable<T>> GetAllByIdAsync<TKey>(TKey id, string propertyName, QueryOption<T> options);
         Task AddAsync(T entity);
         Task UpdateAsync(T entity);
         Task DeleteAsync(int id);

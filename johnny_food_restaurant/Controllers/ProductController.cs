@@ -47,6 +47,8 @@ namespace johnny_food_restaurant.Controllers
         [HttpPost]
         public async Task<IActionResult> AddEdit(Product product, int[] ingredientIds, int catId)
         {
+            ViewBag.Ingredients = await ingredients.GetAllAsync();
+            ViewBag.Categories = await categories.GetAllAsync();
             if (ModelState.IsValid)
             {
                 if (product.ImageFile != null)
@@ -63,8 +65,7 @@ namespace johnny_food_restaurant.Controllers
 
                 if(product.ProductId == 0)
                 {
-                    ViewBag.Ingredients = await ingredients.GetAllAsync();
-                    ViewBag.Categories = await categories.GetAllAsync();
+                    
                     product.CategoryId = catId;
 
                     //add ingredients
@@ -116,5 +117,21 @@ namespace johnny_food_restaurant.Controllers
             }
            return RedirectToAction("index","product");
         }
+
+        [HttpPost]
+        public async Task<IActionResult> Delete(int id)
+        {
+            try
+            {
+                await products.DeleteAsync(id);
+                return RedirectToAction("index");
+            }
+            catch
+            {
+                ModelState.AddModelError("", "Product not found. ");
+                return RedirectToAction("Index");
+            }
+        }
+    
     }
 }

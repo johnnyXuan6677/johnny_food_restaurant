@@ -15,6 +15,16 @@ builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.R
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
 
+
+//�ʪ����s�W�{���Asave server memory
+builder.Services.AddMemoryCache();
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30); // Set your timeout here
+});
+
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -36,6 +46,8 @@ app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
+//�ʪ����s�W�{��
+app.UseSession();
 
 app.MapControllerRoute(
     name: "default",
