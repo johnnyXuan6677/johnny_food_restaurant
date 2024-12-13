@@ -138,7 +138,7 @@ namespace johnny_food_restaurant.Controllers
             // Redirect to the Order Confirmation page
             return RedirectToAction("ViewOrders");
         }
-
+                           
         [HttpGet]
         [Authorize]
         public async Task<IActionResult> ViewOrders()

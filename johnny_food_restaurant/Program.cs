@@ -51,7 +51,7 @@ app.UseSession();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=ingredient}/{action=Index}/{id?}");
+    pattern: "{controller=product}/{action=Index}/{id?}");
 app.MapRazorPages();
 
 app.Run();
