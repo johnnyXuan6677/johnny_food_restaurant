@@ -1,0 +1,152 @@
+﻿
+@{
+    ViewData["Title"] = "Certify pin code ";
+}
+
+<html>
+
+
+
+<head>
+	
+</head>
+
+
+
+
+<body>
+	<h1>透過 fetch 發送 JSON 資料</h1>
+	<form id="jsonForm">
+		<label for="name">名稱：</label>
+		<input type="text" id="name" name="name" required>
+		<br>
+		<label for="age">年齡：</label>
+		<input type="number" id="age" name="age" required>
+		<br>
+		<button type="submit">送出</button>
+	</form>
+
+	<script>
+		document.getElementById("jsonForm").addEventListener("submit", function (event) {
+			event.preventDefault(); // 阻止表單的默認提交行為
+
+			// 收集表單數據
+			const formData = {
+				name: document.getElementById("name").value,
+				age: document.getElementById("age").value
+			};
+
+			// 發送 POST 請求
+			fetch('/api/HiPKI', {
+				method: 'POST', // HTTP 方法
+				headers: {
+					'Content-Type': 'application/json' // 告訴伺服器傳送的是 JSON
+				},
+				body: JSON.stringify(formData) // 將數據轉換為 JSON 字符串
+			})
+				.then(response => {
+					if (!response.ok) {
+						throw new Error(`HTTP 錯誤！狀態碼：${response.status}`);
+					}
+					return response.json(); // 將伺服器回應轉換為 JSON
+				})
+				.then(data => {
+					console.log('成功：', data);
+					alert('數據已成功送出！');
+				})
+				.catch(error => {
+					console.error('錯誤：', error);
+					alert('數據傳送失敗，請檢查伺服器或網路！');
+				});
+		});
+	</script>
+
+
+
+
+
+
+
+
+    <table width="80%" class="tab03" border="1" cellpadding="2" cellspacing="1" align="center" >
+	<tbody>
+	  	<tr style="text-align: center;">
+			<th colspan="3" style="text-align: center;">IC卡功能檢測</th>
+	  	</tr>		
+		<tr align="left" >
+			<th bgcolor="#eff5f8"  width="40%">檢測項目</th>
+			<td bgcolor="#ffffff" width="5%">結果</td>
+			<td bgcolor="#ffffff">檢測內容</span>
+			</td>
+		</tr>
+		
+		<tr align="left">
+			<th class="T11b" bgcolor="#eff5f8">　5.選擇讀卡機及卡片</th>
+			<td bgcolor="#ffffff" width="5%">
+				<span id="slotPass"></span>
+			</td>
+			<td bgcolor="#ffffff">
+				<select id="slotDescription"></select>
+			</td>
+		</tr>
+		<tr align="left">
+			<th class="T11b" bgcolor="#eff5f8">　6.輸入PIN碼並開始檢測</th>
+			<td bgcolor="#ffffff" width="5%">
+				<span id="pinPass"></span>
+			</td>
+			<td bgcolor="#ffffff">
+				<input type="password" maxlength="12" id="pin" name="pin"/><input type="button" name="startTest" value="開始檢測" onclick="startTest()"/>
+			</td>
+		</tr>
+		<tr align="left">
+			<th class="T11b" bgcolor="#eff5f8">　7.簽章驗證測試</th>
+			<td bgcolor="#ffffff" width="5%">
+				<span id="signPass"></span>
+			</td>
+			<td bgcolor="#ffffff">
+				<span id="signResult"></span>
+			</td>
+		</tr>
+		<!--tr align="left">
+			<th class="T11b" bgcolor="#eff5f8">　7.加密解密測試</th>
+			<td bgcolor="#ffffff" width="5%">
+				<span id="encryptPass"></span>
+			</td>
+			<td bgcolor="#ffffff">
+				<span id="encryptResult"></span>
+			</td>
+		</tr-->
+		<tr align="left">
+			<th class="T11b" bgcolor="#eff5f8">　8.簽章憑證資訊</th>
+			<td bgcolor="#ffffff" width="5%">
+				<span id="signCertPass"></span>
+			</td>
+			<td bgcolor="#ffffff">
+				<span id="signCert"></span>
+			</td>
+		</tr>
+		<tr align="left">
+			<th class="T11b" bgcolor="#eff5f8">　9.加密憑證資訊</th>
+			<td bgcolor="#ffffff" width="5%">
+				<span id="encryptCertPass"></span>
+			</td>
+			<td bgcolor="#ffffff">
+				<span id="encryptCert"></span>
+			</td>
+		</tr>
+		<tr align="left">
+			<th class="T11b" bgcolor="#eff5f8">　重新開始檢測</th>
+			<td bgcolor="#ffffff" width="5%">
+				<span id="allPass"></span>
+			</td>
+			<td bgcolor="#ffffff">
+				<input type="button" name="restartTest" value="重新開始檢測" onclick="location.reload()"/>
+			</td>
+		</tr>
+	</tbody>
+</table>
+    
+</body>
+
+
+</html>
