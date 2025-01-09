@@ -19,37 +19,22 @@ namespace johnny_food_restaurant.Controllers
 			Console.WriteLine(exedir);
 			return View();
 		}
-		/*
-				[HttpPost]
-				public IActionResult PostData([FromBody] MyDataModel data)
-				{
-					if (data == null)
-					{
-						return BadRequest("數據無效");
-					}
-
-					// 使用 Console.WriteLine 輸出數據
-					Console.WriteLine($"接收到的數據: Name = {data.Name}, Age = {data.Age}");
-
-
-
-					// 處理數據
-					return Ok(new { message = "數據已成功接收", receivedData = data });
-				}
-	*/
 
 		[HttpPost("sign")]
 		public IActionResult Sign([FromBody] JObject post)
 		{
-			Console.WriteLine("start Sign function ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-
 			
+
+
 			if (post == null || !post.ContainsKey("tbs") || !post.ContainsKey("pin"))
 			{
 				return BadRequest("require tbs and pin");
 			}
 
 			string exedir = Directory.GetCurrentDirectory();
+			Console.WriteLine(exedir);
+			
+
 			if (Environment.CurrentDirectory.ToUpper() == "C:\\Windows\\system32".ToUpper())
 			{
 				exedir = Environment.GetEnvironmentVariable("HOME");
@@ -135,15 +120,15 @@ namespace johnny_food_restaurant.Controllers
 				exereq["checkValidity"] = post["checkValidity"];
 			}
 
-			// Add cacheCardSn and cacheCert if available
-			//exereq["cardSN"] = "0002200325000079";
-			//exereq["certb64"] = "MIIFpzCCBI+gAwIBAgIQX1ntQW/Pfo1ZFTqqydNuDDANBgkqhkiG9w0BAQsFADBgMQswCQYDVQQGEwJUVzEjMCEGA1UECgwaQ2h1bmdod2EgVGVsZWNvbSBDby4sIEx0ZC4xLDAqBgNVBAsMI1B1YmxpYyBDZXJ0aWZpY2F0aW9uIEF1dGhvcml0eSAtIEcyMB4XDTIzMDUzMTA2NTY0N1oXDTI4MDUzMTA2NTY0N1owWzELMAkGA1UEBhMCVFcxJzAlBgNVBAoMHuS4reiPr+mbu+S/oeiCoeS7veaciemZkOWFrOWPuDESMBAGA1UEAwwJ6YSt5a6H6LuSMQ8wDQYDVQQFEwY5MDExMjUwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQC8s4q+E+CBcsVtAGWWq5Y9S2g65IEKQXsO83fqUjHqqIXETyZrxypXoye7z+MoyNnzOTwHbUFeVjedVqyA3FzSAKcFDHlsyrIXkJGvI8RHlHx9hvxCsI5b8Axrjk+mLpoVIXPD0qj2BN3AOPo5fG2ItvLj2x38VZExawqc5EGE594lrPSdG2HnYnyy+G0lsJ9ZkRXaXHG2BTvVJCRmtNEPNmSbGJ5ZeRex0394KGZ4m7zeZJ2sBPzRFVmOMwtGaZUF/UUueIHuGg2Q50YDWjIyWza5HhC5sYmYQnXEloYjGG73BgLEZYshpJ4zgB4p6J44GEJ5s0xW3FOZdwkh6Yj1AgMBAAGjggJgMIICXDAfBgNVHSMEGDAWgBTLg31lFa+pyfOoqfRkfHlSBXRAYTAdBgNVHQ4EFgQUKcw1/I8NLCcaeVjQfJVVhpApXR8wgZwGA1UdHwSBlDCBkTBKoEigRoZEaHR0cDovL3JlcG9zaXRvcnkucHVibGljY2EuaGluZXQubmV0L2NybC9QdWJDQUcyLzEwMDAtMS9jb21wbGV0ZS5jcmwwQ6BBoD+GPWh0dHA6Ly9yZXBvc2l0b3J5LnB1YmxpY2NhLmhpbmV0Lm5ldC9jcmwvUHViQ0FHMi9jb21wbGV0ZS5jcmwwgZMGCCsGAQUFBwEBBIGGMIGDMEkGCCsGAQUFBzAChj1odHRwOi8vcmVwb3NpdG9yeS5wdWJsaWNjYS5oaW5ldC5uZXQvY2VydHMvSXNzdWVkVG9UaGlzQ0EucDdiMDYGCCsGAQUFBzABhipodHRwOi8vb2NzcC5wdWJsaWNjYS5oaW5ldC5uZXQvT0NTUC9vY3NwRzIwJwYDVR0gBCAwHjANBgsrBgEEAYG3I2QAAzANBgsrBgEEAYG3I2QACTAOBgNVHQ8BAf8EBAMCBsAwNAYDVR0lBC0wKwYIKwYBBQUHAwIGCCsGAQUFBwMEBgorBgEEAYI3CgMMBgkqhkiG9y8BAQUwCQYDVR0TBAIwADAlBgNVHREEHjAcgRpqb2hubnljaGVuZzk4OThAY2h0LmNvbS50dzBEBgNVHQkEPTA7MBAGCGCGdgFkAoFIMQQCAgPoMBEGCGCGdgFkAoFJMQUCAwGGoTAUBghghnYBZAKBSjEIDAY5MDExMjUwDQYJKoZIhvcNAQELBQADggEBAL4dCXCeqdt7zNhpR5xpEJERpBEsqLOAqjpdwD5jqB+AfW8BMtaU+vIwVzkBIE3kOpB/vs5/igh9yG6q4jf+MVOl0nVuz8Y1ol0QDWJ4ZYP8OJ22L8JTSPnhIOiDTkhvnwdpDqH1xELcT+pCmO6oG9VZyZHP3MalLIkUSev8+QaQx9KFOmYxFNpY7fz6H7l7cGUQhB8MmF1SWHfRQArxW5C2bR+je43u4mf1l2qoTR1rvq+WmU4p9FCvLICyR6LKm2yB7Eipfu4DL4pR391CXGKGk4AEGltxRycTWbTVTuITcBsYKctuj1xRRfY04EsFHC+/2kljZs+s83N0R0AfcoE=";
 			exereq["pkcs11"] = int.Parse(System.IO.File.ReadAllText(Path.Combine(exedir, "p11id.txt")).Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None)[0]);
 
-			string jsons = JsonConvert.SerializeObject(exereq);
-			Console.WriteLine(exereq);
 
+			//進入HiPKI.exe內部後應該還會再做一次json格式轉換所以傳進去的是json serial成string 在serial成string的東西，不然就會出現0x7600000B的錯誤
+			string jsons = JsonConvert.SerializeObject(JsonConvert.SerializeObject(exereq));
 			
+			Console.WriteLine(jsons);
+
+
 			var processStartInfo = new ProcessStartInfo
 			{
 				FileName = Path.Combine(exedir, "HiPKISign.exe"),
@@ -155,14 +140,15 @@ namespace johnny_food_restaurant.Controllers
 			};
 			
 
-			Console.WriteLine("start HiPKISign  function ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+			
 			using (var process = new Process { StartInfo = processStartInfo })
 			{
+				Console.WriteLine("process start ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
 				process.Start();
 				string stdout = process.StandardOutput.ReadToEnd();
 				string stderr = process.StandardError.ReadToEnd();
 				process.WaitForExit();
-
+				Console.WriteLine("process end ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
 				if (System.IO.File.Exists(Path.Combine(logDir, "tbsTemp.txt")))
 				{
 					System.IO.File.Delete(Path.Combine(logDir, "tbsTemp.txt"));
