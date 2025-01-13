@@ -4,7 +4,7 @@ using System.IO;
 using Newtonsoft.Json;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json.Linq;
-
+using System.Text;
 
 namespace johnny_food_restaurant.Controllers
 {
@@ -14,7 +14,6 @@ namespace johnny_food_restaurant.Controllers
 	{
 		public IActionResult Index()
 		{
-			Console.WriteLine("helllo world ~~111111111111");
 			string exedir = Directory.GetCurrentDirectory();
 			Console.WriteLine(exedir);
 			return View();
@@ -23,8 +22,6 @@ namespace johnny_food_restaurant.Controllers
 		[HttpPost("sign")]
 		public IActionResult Sign([FromBody] JObject post)
 		{
-			
-
 
 			if (post == null || !post.ContainsKey("tbs") || !post.ContainsKey("pin"))
 			{
@@ -143,12 +140,10 @@ namespace johnny_food_restaurant.Controllers
 			
 			using (var process = new Process { StartInfo = processStartInfo })
 			{
-				Console.WriteLine("process start ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
 				process.Start();
 				string stdout = process.StandardOutput.ReadToEnd();
 				string stderr = process.StandardError.ReadToEnd();
 				process.WaitForExit();
-				Console.WriteLine("process end ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
 				if (System.IO.File.Exists(Path.Combine(logDir, "tbsTemp.txt")))
 				{
 					System.IO.File.Delete(Path.Combine(logDir, "tbsTemp.txt"));
@@ -172,11 +167,9 @@ namespace johnny_food_restaurant.Controllers
 					Console.WriteLine(resultJson);
 					if (resultJson["ret_code"]?.ToString() != "0")
 					{
-						Console.WriteLine("ret_code is not zero !...");
 						resultJson["message"] = "MajorErrorReason";
 						if (resultJson["last_error"] != null)
 						{
-							Console.WriteLine("last_error is not null !...");
 							resultJson["message2"] = "MinorErrorReason";
 						}
 						return StatusCode(500, resultJson.ToString());
@@ -184,8 +177,6 @@ namespace johnny_food_restaurant.Controllers
 					else
 					{
 						Console.WriteLine("everything is correct !....");
-						// cacheCardSn = resultJson["cardSN"];
-						// cacheCert = resultJson["certb64"];
 						return Ok(resultJson.ToString());
 					}
 				}
@@ -193,14 +184,57 @@ namespace johnny_food_restaurant.Controllers
 			Console.WriteLine("End HiPKISign  function ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
 		}
 
+
+		[HttpGet("pkcs11info")]
+		public IActionResult PKCSInfo(bool withcert) {
+
+			var exereq = new JObject
+			{
+				["withCert"] = "true",
+				["withKey"] = "true"
+			};
+			string exedir = Directory.GetCurrentDirectory();
+			exereq["pkcs11"] = int.Parse(System.IO.File.ReadAllText(Path.Combine(exedir, "p11id.txt")).Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None)[0]);
+
+
+			//進入HiPKI.exe內部後應該還會再做一次json格式轉換所以傳進去的是json serial成string 在serial成string的東西，不然就會出現0x7600000B的錯誤
+			string jsons = JsonConvert.SerializeObject(JsonConvert.SerializeObject(exereq));
+
+			Console.WriteLine(jsons);
+
+			var processStartInfo = new ProcessStartInfo
+			{
+				FileName = Path.Combine(exedir, "ListInfo.exe"),
+				Arguments = jsons,
+				RedirectStandardOutput = true,
+				RedirectStandardError = true,
+				UseShellExecute = false,
+				CreateNoWindow = true,
+				StandardOutputEncoding = Encoding.UTF8, // 確保中文編碼正確
+				StandardErrorEncoding = Encoding.UTF8  // 確保錯誤輸出的中文編碼正確
+			};
+
+
+
+			using (var process = new Process { StartInfo = processStartInfo })
+			{
+				process.Start();
+				string stdout = process.StandardOutput.ReadToEnd();
+				string stderr = process.StandardError.ReadToEnd();
+				process.WaitForExit();
+
+				var resultJson = JObject.Parse(stdout);
+				Console.WriteLine(resultJson);
+
+				return Ok(resultJson.ToString());
+
+			}
+
+				
+		}
 		
 
-
-		public class MyDataModel
-		{
-			public string? Name { get; set; }
-			public int Age { get; set; }
-		}
+		
 
 
 	}

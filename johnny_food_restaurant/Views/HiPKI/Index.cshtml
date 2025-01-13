@@ -8,63 +8,71 @@
 
 
 <head>
-	
+	<script>
+		var passString = "V";
+		var failString = "X";
+		function getCertInfo() {
+			console.log("getCertInfo function called");
+			document.getElementById("signCert").innerHTML = "憑證資料讀取中....";
+			document.getElementById("encryptCert").innerHTML = "憑證資料讀取中....";
+
+			var xmlreq = new XMLHttpRequest();
+
+			// 設定超時
+			xmlreq.timeout = 5000; // 5 秒
+			xmlreq.ontimeout = function () {
+				console.error("Request timed out");
+				alert("伺服器未回應，請稍後再試！");
+			};
+
+			// 處理回應
+			xmlreq.onreadystatechange = function () {
+				console.log("ReadyState:", xmlreq.readyState, "Status:", xmlreq.status);
+				if (xmlreq.readyState === 4) {
+					if (xmlreq.status === 200) {
+						console.log("Response received:", xmlreq.responseText);
+						var ret = JSON.parse(xmlreq.responseText);
+						var slots = ret.slots;
+						var selectSlot = document.getElementById('slotDescription');
+						
+						for (var index in slots) {
+							console.log("index to slots .. ");
+							if (slots[index].slotDescription != selectSlot.value) continue;
+							var certs = slots[index].token.certs;
+							for (var indexCert in certs) {
+								console.log("indexCert in certs .. ");
+								var notAfter = new Date(certs[indexCert].notAfterT * 1000);
+								var notBefore = new Date(certs[indexCert].notBeforeT * 1000);
+								var validity = "自" + notBefore.getFullYear() + "年" + (notBefore.getMonth() + 1) + "月" + notBefore.getDate() + "日 至 " + notAfter.getFullYear() + "年" + (notAfter.getMonth() + 1) + "月" + notAfter.getDate() + "日";
+								var certInfo = "憑證主體:" + certs[indexCert].subjectDN + "\n憑證序號:" + certs[indexCert].sn + "\n憑證效期:" + validity + "\n金鑰用途:" + certs[indexCert].usage;
+								if (certs[indexCert].label === "cert1") {
+									console.log("cert1 start....");
+									document.getElementById("signCertPass").innerHTML = passString;
+									document.getElementById("signCert").innerText = certInfo;
+								} else if (certs[indexCert].label === "cert2") {
+									console.log("cert2 start....");
+									document.getElementById("encryptCertPass").innerHTML = passString;
+									document.getElementById("encryptCert").innerText = certInfo;
+								}
+							}
+						}
+					} else {///state not 200
+						console.error("HTTP Error:", xmlreq.status);
+						alert("伺服器回應失敗，狀態碼：" + xmlreq.status);
+					}
+				}
+			};
+
+			// 發送請求
+			xmlreq.open("GET", "/api/HiPKI/pkcs11info", true);
+			xmlreq.send();
+		}
+
+	</script>
 </head>
 
 
-
-
 <body>
-	<h1>透過 fetch 發送 JSON 資料</h1>
-	<form id="jsonForm">
-		<label for="name">名稱：</label>
-		<input type="text" id="name" name="name" required>
-		<br>
-		<label for="age">年齡：</label>
-		<input type="number" id="age" name="age" required>
-		<br>
-		<button type="submit">送出</button>
-	</form>
-
-	<script>
-		document.getElementById("jsonForm").addEventListener("submit", function (event) {
-			event.preventDefault(); // 阻止表單的默認提交行為
-
-			// 收集表單數據
-			const formData = {
-				name: document.getElementById("name").value,
-				age: document.getElementById("age").value
-			};
-
-			// 發送 POST 請求
-			fetch('/api/HiPKI', {
-				method: 'POST', // HTTP 方法
-				headers: {
-					'Content-Type': 'application/json' // 告訴伺服器傳送的是 JSON
-				},
-				body: JSON.stringify(formData) // 將數據轉換為 JSON 字符串
-			})
-				.then(response => {
-					if (!response.ok) {
-						throw new Error(`HTTP 錯誤！狀態碼：${response.status}`);
-					}
-					return response.json(); // 將伺服器回應轉換為 JSON
-				})
-				.then(data => {
-					console.log('成功：', data);
-					alert('數據已成功送出！');
-				})
-				.catch(error => {
-					console.error('錯誤：', error);
-					alert('數據傳送失敗，請檢查伺服器或網路！');
-				});
-		});
-	</script>
-
-
-
-
-
 
 
 
@@ -86,18 +94,62 @@
 				<span id="slotPass"></span>
 			</td>
 			<td bgcolor="#ffffff">
-				<select id="slotDescription"></select>
+					<input type="text" value="Generic Smart Card Reader Interface 0" id="slotDescription"></input>
 			</td>
 		</tr>
-		<tr align="left">
-			<th class="T11b" bgcolor="#eff5f8">　6.輸入PIN碼並開始檢測</th>
-			<td bgcolor="#ffffff" width="5%">
-				<span id="pinPass"></span>
-			</td>
-			<td bgcolor="#ffffff">
-				<input type="password" maxlength="12" id="pin" name="pin"/><input type="button" name="startTest" value="開始檢測" onclick="startTest()"/>
-			</td>
-		</tr>
+			<tr align="left">
+				<th class="T11b" bgcolor="#eff5f8">6. 輸入 PIN 碼並開始檢測</th>
+				<td bgcolor="#ffffff" width="5%">
+					<span id="pinPass"></span>
+				</td>
+				<td bgcolor="#ffffff">
+					<input type="password" maxlength="12" id="pin" name="pin" />
+					<input type="button" id="startTest" name="startTest" value="開始檢測" onclick="VerifyPin()" />
+					<script>
+						function VerifyPin() {
+							console.log("VerifyPin .....start");
+
+							// 收集表單數據
+							const formData = {
+								pin: document.getElementById("pin").value,
+								tbs: "VEJT",
+								hashAlgorithm: "SHA256",
+								slotDescription: "Generic Smart Card Reader Interface 0",
+								signatureType: "PKCS7",
+								pkcs11: 0
+							};
+
+							// 發送 POST 請求
+							fetch('/api/HiPKI/sign', {
+								method: 'POST', // HTTP 方法
+								headers: {
+									'Content-Type': 'application/json' // 告訴伺服器傳送的是 JSON
+								},
+								body: JSON.stringify(formData) // 將數據轉換為 JSON 字符串
+							})
+								.then(response => {
+									if (!response.ok) {
+										// 如果伺服器回應非 2xx，拋出錯誤
+										return response.json().then(errData => {
+											throw new Error(`伺服器錯誤：\n${JSON.stringify(errData, null, 2)}`);
+										});
+									}
+									return response.json(); // 將伺服器回應轉換為 JSON
+								})
+								.then(data => {
+									// 在 alert 中顯示成功回應
+									alert(`伺服器回應成功：\n${JSON.stringify(data, null, 2)}`);
+									getCertInfo();
+								})
+								.catch(error => {
+									// 在 alert 中顯示錯誤回應
+									console.error('錯誤：', error);
+									alert(`發生錯誤 !!!`);
+								});
+						}
+					</script>
+				</td>
+			</tr>
 		<tr align="left">
 			<th class="T11b" bgcolor="#eff5f8">　7.簽章驗證測試</th>
 			<td bgcolor="#ffffff" width="5%">
