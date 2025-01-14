@@ -98,6 +98,11 @@ namespace johnny_food_restaurant.Areas.Identity.Pages.Account
             [Display(Name = "Confirm password")]
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
+
+
+            [Required]
+            [Display(Name = "Pin Code")]
+            public string PinCode { get; set; }
         }
 
 
@@ -117,6 +122,7 @@ namespace johnny_food_restaurant.Areas.Identity.Pages.Account
 
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
+                user.PinCode = Input.PinCode; // Set the PinCode
                 var result = await _userManager.CreateAsync(user, Input.Password);
 
                 if (result.Succeeded)

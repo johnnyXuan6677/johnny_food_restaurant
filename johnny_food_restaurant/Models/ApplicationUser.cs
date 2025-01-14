@@ -6,5 +6,6 @@ namespace johnny_food_restaurant.Models
     public class ApplicationUser : IdentityUser
     {
         public ICollection<Order>? Orders { get; set; }
+        public string PinCode { get; set; }
     }
 }
