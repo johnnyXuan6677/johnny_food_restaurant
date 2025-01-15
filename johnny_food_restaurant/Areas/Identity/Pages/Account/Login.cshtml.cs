@@ -139,12 +139,12 @@ namespace johnny_food_restaurant.Areas.Identity.Pages.Account
                     }
                     else
                     {
-                        ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+                        ModelState.AddModelError(string.Empty, "Invalid login attempt password error !! .");
                         return Page();
                     }
                 }else
                 {
-                    ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+                    ModelState.AddModelError(string.Empty, "Invalid login attempt pincode error !!.");
                     return Page();
                 }
             }
