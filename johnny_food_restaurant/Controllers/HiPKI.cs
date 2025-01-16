@@ -181,7 +181,7 @@ namespace johnny_food_restaurant.Controllers
 					}
 				}
 			}
-			Console.WriteLine("End HiPKISign  function ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+	
 		}
 
 
