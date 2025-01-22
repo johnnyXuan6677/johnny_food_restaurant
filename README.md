@@ -14,7 +14,7 @@
 </h3>
 
   <p align="left">
-    This is a project website build with ASP.net MVC core, and add some additional function such as login/register/shopping cart etc... <br> This project also include verify pincode for Citizen Digital Certificate. <br>This readme page isn't finish it will be update later. 
+    This is a project website build with ASP.net MVC core, and add some additional function such as login/register/shopping cart etc... <br> This project also include verify pincode for Citizen Digital Certificate. <br><font color="red">This readme page isn't finish it will be update later.</font> 
   </p>
 </div>
 
